@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: library-backend
+    runtime: java
+    buildCommand: cd backend && mvn clean package -DskipTests
+    startCommand: cd backend && java -jar target/library-backend-1.0.0.jar --spring.profiles.active=prod
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DB_URL
+        fromDatabase:
+          name: library-db
+          property: connectionString
+      - key: DB_USERNAME
+        fromDatabase:
+          name: library-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: library-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JAVA_VERSION
+        value: "17"
+
+  - type: pserv
+    name: library-db
+    runtime: postgresql
+    plan: free
